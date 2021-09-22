@@ -1,0 +1,16 @@
+*{
+  margin: 0;
+  padding: 0;
+}
+
+.negrita{
+  font-weight: bold;
+}
+
+.bueno span{
+  color: blue;
+}
+
+.malo span{
+  color: red;
+}
