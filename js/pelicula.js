@@ -17,19 +17,45 @@ class Pelicula {
     this.iniciar();
   }
   iniciar(){
+    //Introducción
     document.write(`<h1>${this.titulo}</h1>`);
-    document.write(`<p>${this.pueblo.nombre} era un pueblo ${this.pueblo.descripcion}.`);
-    this.narrador.hablar(`Era una soleada mañana.`);
-    this.paco.hablar(`Hola ${this.maria.nombre}. Hoy hace un día espléndido.`);
-    this.maria.hablar(`Hola ${this.paco.nombre}, la verdad que sí.`);
-    this.narrador.hablar(`Ambos se miraron un instante y siguieron su camino...`);
-    this.morgan.hablar(`Vaya pueblo más... polvoriento`);
-    this.morgan.hablar(`¡Eh, tú! ¡Pringao! Dame tu caballo y el sombrero.`);
-    this.paco.hablar(`¡Jamás!`);
-    this.morgan.hablar(`¿Eso quieres?`);
+    document.write(`<p>${this.pueblo.nombre} era un pueblo ${this.pueblo.descripcion}.</p>`);
+
+    //Diálogo
+    personajeHabla(this.narrador, `Era una soleada mañana.`);
+    personajeHabla(this.paco, `Hola ${this.maria.nombre}. Hoy hace un día espléndido.`);
+    personajeHabla(this.maria, `Hola ${this.paco.nombre}, la verdad que sí.`);
+    personajeHabla(this.narrador, `Ambos se miraron un instante y siguieron su camino...`);
+    personajeHabla(this.morgan, `Vaya pueblo más... polvoriento`);
+    personajeHabla(this.morgan, `¡Eh, tú! ¡Pringao! Dame tu caballo y el sombrero.`);
+    personajeHabla(this.paco, `¡Jamás!`);
+    personajeHabla(this.morgan, `¿Eso quieres?`);
+
+    //Disparos
     for (let i=1; i<3; i++)
-      this.morgan.arma.disparar();
-    console.log(this.morgan.arma.balas);
+      morganDispara(this.morgan);
+
+    //Comprobar balas de morgan y paco
+    comprobarBalas(this.morgan);
+    comprobarBalas(this.paco);
+
+    //Diálogo
+    personajeHabla(this.narrador, `${this.morgan.nombre} dispara dos veces a sangre fría a ${this.paco.nombre}...`);
+
+    //Condiciones
+    if(random()){
+      personajeHabla(this.paco, '¡¡¡Aaayyy!!!');
+      personajeHabla(this.narrador, `Y este acaba muriendo.`);
+    }else{
+      personajeHabla(this.narrador, `Pero no le da porque va curando heridas con el aliento.`);
+      //Disparos
+      for (let i=1; i<5; i++)
+        morganDispara(this.morgan);
+      
+      //Comprobar balas de morgan y paco
+      comprobarBalas(this.morgan);
+      comprobarBalas(this.paco);
+    }
   }
 }
 
@@ -59,11 +85,11 @@ class Arma {
     this.balas = balas;
     this.cargador = cargador;
   }
-  disparar(){
-    this.balas--;
+  disparar(personaje){
     if(this.balas < 1)
-      document.write('<p>*click*</p>');
-    else document.write('<p>¡¡PUM!!</p>');
+    personajeHabla(personaje, '*click*');
+    else personajeHabla(personaje, '¡¡PUM!!');
+    this.balas--;
   }
   cargar(balas){
     for(let i=this.balas;i<=balas && i<=this.cargador;i++)
@@ -79,8 +105,29 @@ class PersonajeBueno extends Personaje{
 
 class PersonajeMalo extends Personaje{
   hablar(texto){
-    document.write(`<p class="malo">- <span class="negrita">${this.nombre}</span>: GRRRRR... ${texto}</p>`);
+    document.write(`<p class="malo">- <span class="negrita">${this.nombre}</span>: ${texto}</p>`);
   }
+}
+
+//Funciones
+
+function personajeHabla(personaje, dialogo){
+  personaje.hablar(dialogo);
+}
+
+function morganDispara(morgan){
+  morgan.arma.disparar(morgan);
+}
+
+function random(){
+  let aleatorio = Math.floor((Math.random() * 2) + 1);
+  if(aleatorio==1)
+    return true;
+  return false;
+}
+
+function comprobarBalas(personaje){
+  console.log(personaje.nombre + ' tiene ' + personaje.arma.balas + ' balas.');
 }
 
 new Pelicula();
