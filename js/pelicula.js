@@ -7,7 +7,7 @@ class Pelicula {
     //console.log('Se ha creado una película');
     //this es el objeto que ejecuta el código
     this.titulo = 'Tiroteo en Mississippi';
-    this.pueblo = new Pueblo('TodoPolvo', 'muy polvoriento, en mitad del desierto de Arizona y a donde nadie quería llegar')
+    this.pueblo = new Pueblo('TodoPolvo', 'muy polvoriento, en mitad del desierto de Arizona y a donde nadie quería llegar');
     this.narrador = new Narrador();
     this.paco = new PersonajeBueno('Paco');
     this.maria = new PersonajeBueno('María');
@@ -33,11 +33,7 @@ class Pelicula {
 
     //Disparos
     for (let i=1; i<3; i++)
-      morganDispara(this.morgan);
-
-    //Comprobar balas de morgan y paco
-    comprobarBalas(this.morgan);
-    comprobarBalas(this.paco);
+      personajeDispara(this.morgan);
 
     //Diálogo
     personajeHabla(this.narrador, `${this.morgan.nombre} dispara dos veces a sangre fría a ${this.paco.nombre}...`);
@@ -46,15 +42,53 @@ class Pelicula {
     if(random()){
       personajeHabla(this.paco, '¡¡¡Aaayyy!!!');
       personajeHabla(this.narrador, `Y este acaba muriendo.`);
+      personajeHabla(this.narrador, `Y finalmente, ${this.maria.nombre} huye desesperadamente para no acabar igual, y ${this.morgan.nombre} gana la batalla.`);
     }else{
       personajeHabla(this.narrador, `Pero no le da porque va curando heridas con el aliento.`);
       //Disparos
-      for (let i=1; i<5; i++)
-        morganDispara(this.morgan);
-      
-      //Comprobar balas de morgan y paco
-      comprobarBalas(this.morgan);
-      comprobarBalas(this.paco);
+      for (let i=1; i<4; i++)
+        personajeDispara(this.morgan);
+      //Diálogo
+      personajeHabla(this.morgan, `${this.paco.nombre}, voy a por tiiii...`);
+      personajeHabla(this.maria, `¡¡¡Huye ${this.paco.nombre}, huyee!!!`);
+      //Disparo
+      personajeDispara(this.morgan);
+      if(random()){
+        personajeHabla(this.maria, '¡¡¡Aaayyy!!!');
+        personajeHabla(this.narrador, `${this.morgan.nombre} dispara a ${this.maria.nombre}, y esta muere...`);
+        personajeHabla(this.paco, `!!!NOOOOOO¡¡¡`);
+        personajeHabla(this.narrador, `${this.paco.nombre}, furioso, saca su ${this.paco.arma.arma}, y dispara dos veces a ${this.morgan.nombre}.`);
+        //Disparos
+        for(let i=1;i<3;i++)
+          personajeDispara(this.paco);
+        if(random()){
+          personajeHabla(this.morgan, '¡¡¡Aaayyy!!!');
+          personajeHabla(this.narrador, `Y finalmente, ${this.paco.nombre}, mata a ${this.morgan.nombre} y entierra a ${this.maria.nombre} con sus familiares.`);
+        }else{
+          personajeHabla(this.narrador, `${this.morgan.nombre}, no recibe ninguna bala, y procede a disparar a ${this.paco.nombre}, cuando de repente...`);
+          personajeDispara(this.morgan);
+          personajeHabla(this.morgan, `¿Eh?`);
+          for(let i=1;i<3;i++)
+            personajeDispara(this.morgan);
+          personajeHabla(this.narrador, `Ambos se quedan sin balas, pero casualmente hay una bala entre ellos dos.`);
+          if(random()){
+            cargarBalas(1, this.morgan);
+            personajeDispara(this.morgan);
+            personajeHabla(this.paco, '¡¡¡Aaayyy!!!');
+            personajeHabla(this.narrador, `${this.morgan.nombre} coge la última bala y carga su ${this.morgan.arma.arma}, para acabar matando a ${this.paco.nombre}.`);
+            personajeHabla(this.narrador, `Finalmente, ${this.morgan.nombre}, acaba con todos...`);
+          }else{
+            cargarBalas(1, this.paco);
+            personajeDispara(this.paco);
+            personajeHabla(this.morgan, '¡¡¡Aaayyy!!!');
+            personajeHabla(this.narrador, `${this.paco.nombre} coge la última bala y carga su ${this.paco.arma.arma}, para acabar matando a ${this.morgan.nombre}.`);
+            personajeHabla(this.narrador, `Finalmente, ${this.paco.nombre}, acaba con ${this.morgan.nombre} y entierra a ${this.maria.nombre} con sus familiares.`);
+          }
+        }
+      }else{
+        personajeHabla(this.narrador, `${this.morgan.nombre} sigue sin darles, porque va mas borracho que un cuñao en un bautizo...`);
+        personajeHabla(this.narrador, `Y finalmente, tanto ${this.paco.nombre} como ${this.maria.nombre} consiguen huir del pueblo.`)
+      }
     }
   }
 }
@@ -68,7 +102,7 @@ class Pueblo {
 
 class Narrador {
   hablar(texto){
-    document.write(`<p>- ${texto}</p>`);
+    document.write(`<p class="narrador">- ${texto}</p>`);
   }
 }
 
@@ -87,12 +121,13 @@ class Arma {
   }
   disparar(personaje){
     if(this.balas < 1)
-    personajeHabla(personaje, '*click*');
+      personajeHabla(personaje, '*click*');
     else personajeHabla(personaje, '¡¡PUM!!');
-    this.balas--;
+    if(this.balas > 0)
+      this.balas--;
   }
   cargar(balas){
-    for(let i=this.balas;i<=balas && i<=this.cargador;i++)
+    for(let i=this.balas;i<balas && i<this.cargador;i++)
       this.balas++;
   }
 }
@@ -115,8 +150,12 @@ function personajeHabla(personaje, dialogo){
   personaje.hablar(dialogo);
 }
 
-function morganDispara(morgan){
-  morgan.arma.disparar(morgan);
+function personajeDispara(personaje){
+  personaje.arma.disparar(personaje);
+}
+
+function cargarBalas(balas, personaje){
+  personaje.arma.cargar(balas);
 }
 
 function random(){
